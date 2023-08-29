@@ -4,12 +4,15 @@
 //  For example, if the feedback is "too high," guess a number lower than your previous guess, and vice versa.
 //  RefinE your guess based on the feedback until you correctly guess the target number or run out of attempts.
 //it is generated randomly 
+//here in this code the score is given accordin to the logic that :  score += maxAttempts(say 10) - attempts + 1 
 
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+
 
 public class NumberGuessingGameGUI extends JFrame {
     private int lowerBound = 1;
@@ -19,6 +22,8 @@ public class NumberGuessingGameGUI extends JFrame {
     private int attempts;
     private int score;
     private int rounds;
+    private int totalScore;
+    private int roundsWon;
 
     private JLabel instructionLabel;
     private JTextField guessField;
@@ -27,6 +32,10 @@ public class NumberGuessingGameGUI extends JFrame {
     private JLabel scoreLabel;
     private JLabel roundLabel;
     private JButton playAgainButton;
+    private JTextArea scoresTextArea;
+    private JFrame scoresFrame;
+  
+    private JButton exitButton;
 
     public NumberGuessingGameGUI() {
         setTitle("Number Guessing Game");
@@ -56,6 +65,17 @@ public class NumberGuessingGameGUI extends JFrame {
         playAgainButton.setEnabled(false);
         add(playAgainButton);
 
+
+        exitButton = new JButton("Exit");
+        add(exitButton);
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showTotalScoreAndExit();
+            }
+        });
+        
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -71,6 +91,9 @@ public class NumberGuessingGameGUI extends JFrame {
         });
 
         resetGame();
+         // Initialize totalScore to 0
+        totalScore = 0;
+        roundsWon = 0;
     }
 
     private void resetGame() {
@@ -95,6 +118,13 @@ public class NumberGuessingGameGUI extends JFrame {
                 scoreLabel.setText("Score: " + score);
                 submitButton.setEnabled(false);
                 playAgainButton.setEnabled(true);
+
+
+                int roundScore = maxAttempts - attempts + 1;
+                updateTotalScore(roundScore);
+                roundsWon++; 
+                submitButton.setEnabled(false);
+                playAgainButton.setEnabled(true);
             } else if (userGuess < targetNumber) {
                 feedbackLabel.setText("Too low! Try again.");
             } else {
@@ -111,6 +141,32 @@ public class NumberGuessingGameGUI extends JFrame {
         }
     }
 
+    private void showTotalScoreAndExit() {
+        int totalScore = calculateTotalScore();
+        int Numberofrounds =  calculaterounds();
+        JOptionPane.showMessageDialog(this, "Total Score: " + totalScore, "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Number of Rounds: " + Numberofrounds,  "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Thank You for Playing", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0); // Close the application
+
+    }
+
+    private void updateTotalScore(int roundScore) {
+        totalScore += roundScore;
+        scoreLabel.setText("Score: " + totalScore);
+    }
+
+    private int calculateTotalScore() {
+        return totalScore; 
+    }
+
+     private int calculaterounds() {
+        return rounds; 
+    }
+
+   
+
+  
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
